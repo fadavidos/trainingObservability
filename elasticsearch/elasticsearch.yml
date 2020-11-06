@@ -1,0 +1,5 @@
+version: "3.0"
+  path:
+    data: /var/lib/elasticsearch
+    logs: /var/lib/elasticsearch
+ 

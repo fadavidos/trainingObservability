@@ -4,7 +4,10 @@ services:
   fluentd:
     container_name: fluentd
     user: root
-    image: fluentd
+    build: ./fluentd/
+    links:
+      - "es01"
+      - "es02"
     volumes: 
     - /var/lib/docker/containers:/fluentd/log/containers
     - ./fluentd/fluent.conf:/fluentd/etc/fluent.conf
@@ -21,7 +24,7 @@ services:
       - cluster.name=es-docker-cluster
       - discovery.seed_hosts=es02
       - cluster.initial_master_nodes=es01,es02
-      - bootstrap.memory_lock=false
+      - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
       memlock:
@@ -42,7 +45,7 @@ services:
       - cluster.name=es-docker-cluster
       - discovery.seed_hosts=es01
       - cluster.initial_master_nodes=es01,es02
-      - bootstrap.memory_lock=false
+      - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
       memlock:
@@ -50,6 +53,13 @@ services:
         hard: -1
     volumes:
       - data02:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+
+  grafana:
+    image: grafana/grafana:7.2.0
+    ports:
+      - 3000:3000
     networks:
       - elastic
 
